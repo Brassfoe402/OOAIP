@@ -19,3 +19,4 @@ jobs:
 
       - name: Unittest and coverage
         run: dotnet test work.sln /p:CollectCoverage=true /p:Threshold=100 /p:ThresholdType=line
+        
