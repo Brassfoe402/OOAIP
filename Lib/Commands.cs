@@ -1,6 +1,7 @@
 using Hwdtech;
 
-public interface ICommand{
+public interface ICommand
+{
     public void Execute();
 }
 
@@ -17,8 +18,10 @@ public class ShootCmd : ICommand
 
     public void Execute()
     {
+        var torpedo = IoC.Resolve<UObject>("Object.Torpedo.Create", shot_from.instant_velocity);
         objects.Add(
-            IoC.Resolve<UObject>("Object.Torpedo.Create", shot_from.instant_velocity)
+            torpedo
         );
+        IoC.Resolve<ICommand>("Commands.StartMove", torpedo).Execute();
     }
 }

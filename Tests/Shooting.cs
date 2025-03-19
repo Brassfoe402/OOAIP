@@ -6,9 +6,11 @@ using Xunit;
 
 namespace Tests;
 
-public class ShootingFeature{
+public class ShootingFeature
+{
     [Fact]
-    public void TorpedoCreate(){
+    public void TorpedoCreate()
+    {
         new InitScopeBasedIoCImplementationCommand().Execute();
 
         IoC.Resolve<Hwdtech.ICommand>(
@@ -30,6 +32,14 @@ public class ShootingFeature{
             return torpedo.Object;
         }).Execute();
 
+        var movecmd = new Mock<ICommand>();
+        movecmd.Setup(cmd => cmd.Execute()).Verifiable();
+
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Commands.StartMove", (object[] args) =>
+        {
+            return movecmd.Object;
+        }).Execute();
+
         var ship = new Mock<IMoveable>();
         ship.SetupGet(obj => obj.instant_velocity).Returns(new Vector2(1, 1));
 
@@ -41,6 +51,7 @@ public class ShootingFeature{
 
 
         object_pool.VerifyAll();
+        movecmd.VerifyAll();
         Assert.Equal(
             IoC.Resolve<UObject>("Object.Torpedo.Create", ship.Object.instant_velocity).properties["Instant velocity"],
             ship.Object.instant_velocity
